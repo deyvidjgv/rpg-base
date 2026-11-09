@@ -1,0 +1,5 @@
+# Copia este archivo como config.txt (en la carpeta del proyecto) y pon tus datos.
+# config.txt no se sube al repositorio: contiene la clave de tu base de datos.
+url=jdbc:mysql://localhost:3306/rpg_arena_db
+usuario=root
+clave=tu_clave_de_mysql
