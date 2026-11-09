@@ -14,12 +14,14 @@ import com.rpg.items.Inventario;
 import com.rpg.items.Pocion;
 import com.rpg.concurrency.AutoGuardadoDaemon;
 import com.rpg.concurrency.GestorTurno;
+import com.rpg.model.Monstruo;
 import com.rpg.persistencia.GestorArchivos;
 import com.rpg.persistencia.Partida;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.function.Consumer;
 
 /** Coordina el flujo del juego: crear heroe, combatir, torneo, bestiario y guardado. */
 public class MotorJuego {
@@ -45,6 +47,8 @@ public class MotorJuego {
     private int faseTurno;
     private final GestorArchivos archivos = new GestorArchivos();
     private boolean guardadoActivo;
+    // Se ejecuta con el nombre del rival cada vez que el jugador gana un combate.
+    private volatile Consumer<String> alVencerMonstruo;
 
     public MotorJuego(Consola consola) {
         this.consola = consola;
@@ -89,6 +93,15 @@ public class MotorJuego {
             guardarProgreso();
         }
         registro.guardarEnArchivo(archivos);
+    }
+
+    /** Los rivales del combate rapido pasan a ser los monstruos de la tabla monstruos. */
+    public synchronized void sincronizarMonstruos(List<Monstruo> monstruos) {
+        bestiario.sincronizar(monstruos);
+    }
+
+    public void setAlVencerMonstruo(Consumer<String> accion) {
+        alVencerMonstruo = accion;
     }
 
     public void mostrarBestiario() {
@@ -306,12 +319,19 @@ public class MotorJuego {
 
     private void terminarPartida(Personaje jugador, Enemigo enemigo) {
         boolean huyo = combatir(jugador, enemigo);
+        boolean victoria;
         synchronized (this) {
             cerrarCombate(jugador, enemigo, huyo);
+            victoria = !huyo && jugador.estaVivo();
             combateEnCurso = false;
             guardarProgreso();
         }
         registro.guardarEnArchivo(archivos);
+        // Fuera del synchronized: registrar en la base no debe frenar al auto-guardado.
+        Consumer<String> accion = alVencerMonstruo;
+        if (victoria && accion != null) {
+            accion.accept(enemigo.getNombre());
+        }
     }
 
     private void cerrarCombate(Personaje jugador, Enemigo enemigo, boolean huyo) {

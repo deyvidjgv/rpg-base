@@ -29,6 +29,11 @@ public class Enemigo extends Personaje {
         return new Enemigo(getNombre(), getVidaMaxima(), ataque, getDefensa(), efectoEspecial, aturde);
     }
 
+    /** Mismo monstruo con la vida y el ataque de la tabla monstruos; conserva su defensa y su habilidad. */
+    public Enemigo conEstadisticas(String nuevoNombre, int vida, int nuevoAtaque) {
+        return new Enemigo(nuevoNombre, vida, nuevoAtaque, getDefensa(), efectoEspecial, aturde);
+    }
+
     @Override
     public String realizarAtaqueEspecial(Personaje objetivo) {
         int vidaAntes = objetivo.getVida();
