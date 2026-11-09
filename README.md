@@ -1,5 +1,21 @@
 # Simulador de Batalla RPG - Proyecto base
 
+Los dos talleres estan desarrollados. Se conserva el enunciado de la base y su orden;
+el checklist esta marcado segun las pruebas realizadas.
+Las explicaciones, investigaciones y comandos de prueba estan en [explicacion_taller.md](explicacion_taller.md).
+
+Para compilar y ejecutar en PowerShell (JDK 21 o superior):
+
+```powershell
+$fuentes = Get-ChildItem src/main/java -Recurse -Filter *.java | ForEach-Object FullName
+javac --release 21 -encoding UTF-8 -d out $fuentes
+java -cp out com.rpg.Main
+```
+
+---
+
+## Enunciado original
+
 Este es el punto de partida del taller **Concurrencia e Hilos Aplicados al Simulador de Batalla RPG**,
 continuacion del proyecto integrador "Simulador de Batalla RPG / Arena de Heroes" de la **Unidad 4.1**.
 Es el simulador que ya construiste en los talleres 1 a 8, reunido en un solo proyecto y funcionando
@@ -121,64 +137,64 @@ Mas abajo hay un checklist aparte para el taller de archivos.
 
 ### Antes de empezar
 
-- [ ] El proyecto compila y ejecutas `Main` sin errores.
-- [ ] Jugaste un combate rapido y un torneo completo, y localizaste los 5 comentarios `TALLER CONCURRENCIA`.
-- [ ] Repasaste la tabla "Lo que ya debes tener": si algun concepto no lo reconoces, repasalo antes de seguir.
+- [x] El proyecto compila y ejecutas `Main` sin errores.
+- [x] Jugaste un combate rapido y un torneo completo, y localizaste los 5 comentarios `TALLER CONCURRENCIA`.
+- [x] Repasaste la tabla "Lo que ya debes tener": si algun concepto no lo reconoces, repasalo antes de seguir.
 
 ### Seccion 1: Temporizador de turno (`Thread`, `Runnable`, `sleep`)
 
-- [ ] Crear la interfaz `TurnoCallback` con el metodo `void onTiempoAgotado()`.
-- [ ] Crear `TemporizadorTurnoTask` que implemente `Runnable` y reciba por constructor la duracion en segundos y el `TurnoCallback`.
-- [ ] En `run()`, hacer una cuenta regresiva con un `for` o `while` decreciente, un segundo por iteracion.
-- [ ] Usar `Thread.sleep(1000)` dentro de un `try-catch` que capture `InterruptedException`.
-- [ ] Al llegar a 0, llamar a `callback.onTiempoAgotado()`.
-- [ ] Crear `GestorTurno`, que cree el `Thread` con el `Runnable` (o con una lambda) y llame a `.start()`.
-- [ ] Integrarlo en `MotorJuego.pedirAccion`: si el tiempo se agota antes de que el jugador elija, el turno se pierde.
-- [ ] Si el jugador responde a tiempo, cancelar el temporizador con `.interrupt()` (sin banderas booleanas manuales).
+- [x] Crear la interfaz `TurnoCallback` con el metodo `void onTiempoAgotado()`.
+- [x] Crear `TemporizadorTurnoTask` que implemente `Runnable` y reciba por constructor la duracion en segundos y el `TurnoCallback`.
+- [x] En `run()`, hacer una cuenta regresiva con un `for` o `while` decreciente, un segundo por iteracion.
+- [x] Usar `Thread.sleep(1000)` dentro de un `try-catch` que capture `InterruptedException`.
+- [x] Al llegar a 0, llamar a `callback.onTiempoAgotado()`.
+- [x] Crear `GestorTurno`, que cree el `Thread` con el `Runnable` (o con una lambda) y llame a `.start()`.
+- [x] Integrarlo en `MotorJuego.pedirAccion`: si el tiempo se agota antes de que el jugador elija, el turno se pierde.
+- [x] Si el jugador responde a tiempo, cancelar el temporizador con `.interrupt()` (sin banderas booleanas manuales).
 
 ### Seccion 2: Efectos continuos DoT / HoT (`interrupt`, `InterruptedException`)
 
-- [ ] Crear `EfectoContinuoTask` (`Runnable`) con nombre del efecto e intervalo en milisegundos.
-- [ ] En `run()`, usar `while (!Thread.currentThread().isInterrupted())` y aplicar el dano o la curacion sobre el `Personaje`.
-- [ ] En el `catch (InterruptedException e)`: limpiar el estado del personaje, llamar a `Thread.currentThread().interrupt()` y salir del bucle con `break`.
-- [ ] Cada efecto corre en su propio hilo; no se usa `Thread.stop()` ni banderas booleanas.
-- [ ] Reemplazar la logica por turnos de `Personaje.procesarEfectos` por hilos que se cancelan con `.interrupt()`.
-- [ ] Al usar un antidoto, al recibir una purificacion o al terminar el combate, el hilo del efecto se interrumpe y termina limpio.
+- [x] Crear `EfectoContinuoTask` (`Runnable`) con nombre del efecto e intervalo en milisegundos.
+- [x] En `run()`, usar `while (!Thread.currentThread().isInterrupted())` y aplicar el dano o la curacion sobre el `Personaje`.
+- [x] En el `catch (InterruptedException e)`: limpiar el estado del personaje, llamar a `Thread.currentThread().interrupt()` y salir del bucle con `break`.
+- [x] Cada efecto corre en su propio hilo; no se usa `Thread.stop()` ni banderas booleanas.
+- [x] Reemplazar la logica por turnos de `Personaje.procesarEfectos` por hilos que se cancelan con `.interrupt()`.
+- [x] Al usar un antidoto, al recibir una purificacion o al terminar el combate, el hilo del efecto se interrumpe y termina limpio.
 
 ### Seccion 3: Torneo en paralelo (`join`)
 
-- [ ] En `TorneoManager.jugarTorneo`, crear dos `Thread`, uno por semifinal, cada uno con su `Runnable`.
-- [ ] Llamar a `.start()` en ambos para que corran al mismo tiempo.
-- [ ] En el hilo principal, llamar a `.join()` sobre la semifinal A y luego sobre la B.
-- [ ] Proteger los `join()` con `try-catch` de `InterruptedException`.
-- [ ] Consultar los ganadores **solo despues** de que ambos `join()` hayan retornado, y entonces lanzar la final.
-- [ ] Imprimir `Thread.getState()` de cada semifinal antes de `start()`, durante la ejecucion y despues del `join()`, y relacionar lo que ves con el ciclo de vida del hilo (`NEW`, `RUNNABLE`, `TIMED_WAITING`, `TERMINATED`).
+- [x] En `TorneoManager.jugarTorneo`, crear dos `Thread`, uno por semifinal, cada uno con su `Runnable`.
+- [x] Llamar a `.start()` en ambos para que corran al mismo tiempo.
+- [x] En el hilo principal, llamar a `.join()` sobre la semifinal A y luego sobre la B.
+- [x] Proteger los `join()` con `try-catch` de `InterruptedException`.
+- [x] Consultar los ganadores **solo despues** de que ambos `join()` hayan retornado, y entonces lanzar la final.
+- [x] Imprimir `Thread.getState()` de cada semifinal antes de `start()`, durante la ejecucion y despues del `join()`, y relacionar lo que ves con el ciclo de vida del hilo (`NEW`, `RUNNABLE`, `TIMED_WAITING`, `TERMINATED`).
 
 ### Seccion 4: Auto-guardado en segundo plano (hilo daemon)
 
-- [ ] Crear `AutoGuardadoDaemon` con un bucle `while (true)` y `Thread.sleep(intervalo)` entre guardados.
-- [ ] Hacer que el guardado registre periodicamente las estadisticas de los personajes y el historial de la partida **en memoria** (por ejemplo, un `String` o una lista con la ultima copia). No uses archivos todavia.
-- [ ] Llamar a `setDaemon(true)` **antes** de `.start()` (si no, `IllegalThreadStateException`).
-- [ ] Comprobar que la aplicacion cierra de inmediato al salir, sin esperar al hilo de guardado.
+- [x] Crear `AutoGuardadoDaemon` con un bucle `while (true)` y `Thread.sleep(intervalo)` entre guardados.
+- [x] Hacer que el guardado registre periodicamente las estadisticas de los personajes y el historial de la partida **en memoria** (por ejemplo, un `String` o una lista con la ultima copia). No uses archivos todavia.
+- [x] Llamar a `setDaemon(true)` **antes** de `.start()` (si no, `IllegalThreadStateException`).
+- [x] Comprobar que la aplicacion cierra de inmediato al salir, sin esperar al hilo de guardado.
 
 ### Seccion 5: Reto integrador
 
-- [ ] Los cuatro modulos funcionan juntos: temporizador de turno, efectos DoT/HoT, torneo con `join` y auto-guardado daemon.
-- [ ] Cumples la estructura esperada: `com.rpg.core` (`MotorJuego`, `TorneoManager`, `TurnoCallback`), `com.rpg.entities` (`Personaje`, `EstadoEfecto`), `com.rpg.concurrency` (`TemporizadorTurnoTask`, `EfectoContinuoTask`, `AutoGuardadoDaemon`) y `Main`.
-- [ ] El combate y el torneo se juegan completos, sin bloqueos ni excepciones sin controlar.
+- [x] Los cuatro modulos funcionan juntos: temporizador de turno, efectos DoT/HoT, torneo con `join` y auto-guardado daemon.
+- [x] Cumples la estructura esperada: `com.rpg.core` (`MotorJuego`, `TorneoManager`, `TurnoCallback`), `com.rpg.entities` (`Personaje`, `EstadoEfecto`), `com.rpg.concurrency` (`TemporizadorTurnoTask`, `EfectoContinuoTask`, `AutoGuardadoDaemon`) y `Main`.
+- [x] El combate y el torneo se juegan completos, sin bloqueos ni excepciones sin controlar.
 
 ### Seccion 6: Depuracion y condiciones de carrera
 
-- [ ] Reproduciste la condicion de carrera: dos efectos DoT (o un efecto y un ataque) sobre el mismo `Personaje` pierden actualizaciones de vida.
-- [ ] La corrigiste en `Personaje.recibirDanio` y `curar` con `synchronized` (mecanismo principal, visto en la unidad 4.2), y puedes explicar por que lo elegiste.
-- [ ] Protegiste tambien el acceso a `estado` y `efectos` (ver la advertencia de arriba).
-- [ ] Puedes explicar por que `AtomicInteger.addAndGet(-danio)` no basta aqui: `setVida` acota la vida a `0..vidaMaxima` y cambia `estado`. (Reto extra: resolverlo con `updateAndGet` o un bucle con `compareAndSet`.)
-- [ ] Ningun `catch (InterruptedException)` esta vacio ni solo imprime la traza.
-- [ ] Nunca llamas a `.start()` dos veces sobre el mismo `Thread`: para cada turno o combate se crea un `Thread` nuevo.
-- [ ] Nunca llamas a `run()` directamente: usas siempre `start()`, que es lo que crea el hilo nuevo.
-- [ ] Todos los `Thread.sleep()` estan dentro de `try-catch` que gestiona `InterruptedException`.
-- [ ] Todo hilo de auto-guardado o monitoreo usa `setDaemon(true)` antes de `.start()` (ver "Investigacion obligatoria").
-- [ ] El `join()` del torneo espera a ambas semifinales antes de leer la memoria compartida de los ganadores.
+- [x] Reproduciste la condicion de carrera: dos efectos DoT (o un efecto y un ataque) sobre el mismo `Personaje` pierden actualizaciones de vida.
+- [x] La corrigiste en `Personaje.recibirDanio` y `curar` con `synchronized` (mecanismo principal, visto en la unidad 4.2), y puedes explicar por que lo elegiste.
+- [x] Protegiste tambien el acceso a `estado` y `efectos` (ver la advertencia de arriba).
+- [x] Puedes explicar por que `AtomicInteger.addAndGet(-danio)` no basta aqui: `setVida` acota la vida a `0..vidaMaxima` y cambia `estado`. (Reto extra: resolverlo con `updateAndGet` o un bucle con `compareAndSet`.)
+- [x] Ningun `catch (InterruptedException)` esta vacio ni solo imprime la traza.
+- [x] Nunca llamas a `.start()` dos veces sobre el mismo `Thread`: para cada turno o combate se crea un `Thread` nuevo.
+- [x] Nunca llamas a `run()` directamente: usas siempre `start()`, que es lo que crea el hilo nuevo.
+- [x] Todos los `Thread.sleep()` estan dentro de `try-catch` que gestiona `InterruptedException`.
+- [x] Todo hilo de auto-guardado o monitoreo usa `setDaemon(true)` antes de `.start()` (ver "Investigacion obligatoria").
+- [x] El `join()` del torneo espera a ambas semifinales antes de leer la memoria compartida de los ganadores.
 
 ## Checklist del taller de archivos: lo que debes realizar
 
@@ -187,76 +203,76 @@ en `MotorJuego`, `RegistroCombate`, `Main` y las clases del dominio.
 
 ### Antes de empezar
 
-- [ ] El proyecto compila y ejecutas `Main` sin errores.
-- [ ] Localizaste los comentarios `TALLER ARCHIVOS` y entiendes que el guardado actual es solo en memoria.
+- [x] El proyecto compila y ejecutas `Main` sin errores.
+- [x] Localizaste los comentarios `TALLER ARCHIVOS` y entiendes que el guardado actual es solo en memoria.
 
 ### Seccion 1: Clase `File`
 
-- [ ] Crear un `File` con una ruta relativa y otro con una ruta absoluta (`getAbsolutePath()`), y explicar la diferencia.
-- [ ] Usar `exists()`, `length()` y `getName()` para mostrar informacion de un archivo de partida o de log.
-- [ ] Usar `createNewFile()` y manejar su `IOException`.
-- [ ] Crear la carpeta `partidas/` si no existe (`mkdirs()`), sin fallar si ya existe.
+- [x] Crear un `File` con una ruta relativa y otro con una ruta absoluta (`getAbsolutePath()`), y explicar la diferencia.
+- [x] Usar `exists()`, `length()` y `getName()` para mostrar informacion de un archivo de partida o de log.
+- [x] Usar `createNewFile()` y manejar su `IOException`.
+- [x] Crear la carpeta `partidas/` si no existe (`mkdirs()`), sin fallar si ya existe.
 
 ### Seccion 2: Escritura (`BufferedWriter` + `FileWriter`)
 
-- [ ] Volcar el log de `RegistroCombate` a un `.txt` con `BufferedWriter` + `FileWriter`.
-- [ ] Escribir con `newLine()` en vez de concatenar saltos de linea a mano.
-- [ ] Usar `FileWriter(file, true)` para **agregar** (append) sin borrar los combates anteriores, y comprobar la diferencia con el modo por defecto, que sobrescribe.
-- [ ] Hacer `flush()` / cerrar el escritor para que el contenido llegue al disco.
+- [x] Volcar el log de `RegistroCombate` a un `.txt` con `BufferedWriter` + `FileWriter`.
+- [x] Escribir con `newLine()` en vez de concatenar saltos de linea a mano.
+- [x] Usar `FileWriter(file, true)` para **agregar** (append) sin borrar los combates anteriores, y comprobar la diferencia con el modo por defecto, que sobrescribe.
+- [x] Hacer `flush()` / cerrar el escritor para que el contenido llegue al disco.
 
 ### Seccion 3: Lectura (`BufferedReader` + `FileReader`)
 
-- [ ] Leer el log con `BufferedReader` + `FileReader` usando `while ((linea = lector.readLine()) != null)`.
-- [ ] Mostrar por consola el historial leido (por ejemplo, una opcion nueva en el menu de `Main`).
-- [ ] Capturar `FileNotFoundException` cuando el archivo aun no existe y mostrar un mensaje claro (sin tildes).
+- [x] Leer el log con `BufferedReader` + `FileReader` usando `while ((linea = lector.readLine()) != null)`.
+- [x] Mostrar por consola el historial leido (por ejemplo, una opcion nueva en el menu de `Main`).
+- [x] Capturar `FileNotFoundException` cuando el archivo aun no existe y mostrar un mensaje claro (sin tildes).
 
 ### Seccion 4: Borrado
 
-- [ ] Borrar un archivo con `File.delete()` y revisar el `boolean` que devuelve.
-- [ ] Borrar con `Files.deleteIfExists(Path)` y explicar la diferencia con `File.delete()`.
-- [ ] Ofrecer en el menu una opcion para borrar la partida guardada, confirmando antes con el jugador.
+- [x] Borrar un archivo con `File.delete()` y revisar el `boolean` que devuelve.
+- [x] Borrar con `Files.deleteIfExists(Path)` y explicar la diferencia con `File.delete()`.
+- [x] Ofrecer en el menu una opcion para borrar la partida guardada, confirmando antes con el jugador.
 
 ### Seccion 5: Serializacion (`Serializable`, `ObjectOutputStream`, `ObjectInputStream`)
 
-- [ ] Hacer `Serializable` las clases del dominio que forman la partida: `Personaje` (y `Guerrero`, `Mago`, `Enemigo`), `Inventario`, `Pocion`, `Arma`, `Gremio`, `EstadoEfecto`, `PerfilJugador`.
-- [ ] Declarar `serialVersionUID` en cada clase serializable y explicar para que sirve.
-- [ ] Marcar con `transient` al menos un campo que no deba guardarse y comprobar que vuelve con su valor por defecto al cargar.
-- [ ] Guardar la partida con `ObjectOutputStream.writeObject(...)` en un `.dat`.
-- [ ] Cargar la partida con `ObjectInputStream.readObject()`, con el cast al tipo correcto.
-- [ ] Provocar y resolver una `NotSerializableException` por un objeto anidado que no es `Serializable`.
-- [ ] Comprobar que despues de cargar, el `Gremio` y sus `Personaje` siguen relacionados (el ciclo `Personaje` - `Gremio` se serializa bien).
-- [ ] Agregar una opcion "Cargar partida" y comprobar que el juego continua con el estado guardado.
+- [x] Hacer `Serializable` las clases del dominio que forman la partida: `Personaje` (y `Guerrero`, `Mago`, `Enemigo`), `Inventario`, `Pocion`, `Arma`, `Gremio`, `EstadoEfecto`, `PerfilJugador`.
+- [x] Declarar `serialVersionUID` en cada clase serializable y explicar para que sirve.
+- [x] Marcar con `transient` al menos un campo que no deba guardarse y comprobar que vuelve con su valor por defecto al cargar.
+- [x] Guardar la partida con `ObjectOutputStream.writeObject(...)` en un `.dat`.
+- [x] Cargar la partida con `ObjectInputStream.readObject()`, con el cast al tipo correcto.
+- [x] Provocar y resolver una `NotSerializableException` por un objeto anidado que no es `Serializable`.
+- [x] Comprobar que despues de cargar, el `Gremio` y sus `Personaje` siguen relacionados (el ciclo `Personaje` - `Gremio` se serializa bien).
+- [x] Agregar una opcion "Cargar partida" y comprobar que el juego continua con el estado guardado.
 
 ### Seccion 6: `try-with-resources` y excepciones
 
-- [ ] Todos los flujos (`BufferedWriter`, `BufferedReader`, `ObjectOutputStream`, `ObjectInputStream`) se abren con `try-with-resources` (`AutoCloseable`); ningun `close()` manual.
-- [ ] Manejas `IOException`, `FileNotFoundException` (la mas especifica va primero), `ClassNotFoundException` y `NotSerializableException` con mensajes utiles.
-- [ ] Ningun `catch` esta vacio ni solo imprime la traza.
-- [ ] El juego no se cae si el archivo no existe, esta corrupto o no se puede escribir.
+- [x] Todos los flujos (`BufferedWriter`, `BufferedReader`, `ObjectOutputStream`, `ObjectInputStream`) se abren con `try-with-resources` (`AutoCloseable`); ningun `close()` manual.
+- [x] Manejas `IOException`, `FileNotFoundException` (la mas especifica va primero), `ClassNotFoundException` y `NotSerializableException` con mensajes utiles.
+- [x] Ningun `catch` esta vacio ni solo imprime la traza.
+- [x] El juego no se cae si el archivo no existe, esta corrupto o no se puede escribir.
 
 ### Seccion 7: Integracion con concurrencia (si ya hiciste el taller anterior)
 
-- [ ] `AutoGuardadoDaemon` escribe a disco (ya no solo en memoria) cada cierto intervalo.
-- [ ] Protegiste la escritura y la lectura del mismo archivo con `synchronized` (sobre un mismo objeto candado o metodos de una clase compartida), para que el daemon y el hilo principal no lo accedan a la vez.
-- [ ] Comprobaste que, al cerrar el juego, el hilo daemon no deja un archivo a medio escribir.
+- [x] `AutoGuardadoDaemon` escribe a disco (ya no solo en memoria) cada cierto intervalo.
+- [x] Protegiste la escritura y la lectura del mismo archivo con `synchronized` (sobre un mismo objeto candado o metodos de una clase compartida), para que el daemon y el hilo principal no lo accedan a la vez.
+- [x] Comprobaste que, al cerrar el juego, el hilo daemon no deja un archivo a medio escribir.
 
 ## Investigacion obligatoria
 
 Dos temas de la guia no se explican en las presentaciones de las unidades 4.1 y 4.2. Debes investigarlos
 por tu cuenta y dejar evidencia en el proyecto:
 
-- [ ] **Hilos daemon.** Demuestra con una prueba que la JVM cierra aunque el hilo daemon siga vivo, y que
+- [x] **Hilos daemon.** Demuestra con una prueba que la JVM cierra aunque el hilo daemon siga vivo, y que
   `setDaemon(true)` despues de `start()` lanza `IllegalThreadStateException`. Anota en un comentario la
   diferencia entre hilo de usuario y hilo daemon.
-- [ ] **`ReentrantLock`.** Reescribe `Personaje.recibirDanio` con `lock()` / `unlock()` dentro de `try-finally`
+- [x] **`ReentrantLock`.** Reescribe `Personaje.recibirDanio` con `lock()` / `unlock()` dentro de `try-finally`
   y explica en 2 o 3 lineas cuando lo preferirias a `synchronized`. Si el `unlock()` no esta en el `finally`,
   el lock puede quedar tomado para siempre.
 
 ## Investigacion obligatoria (taller de archivos)
 
-- [ ] **`FileWriter` vs `Files.writeString`.** Explica en 2 o 3 lineas la diferencia (flujo con buffer que
+- [x] **`FileWriter` vs `Files.writeString`.** Explica en 2 o 3 lineas la diferencia (flujo con buffer que
   abres y cierras tu, frente a una sola llamada de NIO que escribe todo el texto) y cuando usarias cada uno.
-- [ ] **Seguridad de `Serializable`.** Explica por que no se debe deserializar (`readObject`) datos que no
+- [x] **Seguridad de `Serializable`.** Explica por que no se debe deserializar (`readObject`) datos que no
   son de confianza: un archivo manipulado puede ejecutar codigo o consumir recursos al reconstruir objetos.
   Anota que alternativas existen (por ejemplo JSON o un formato de texto propio).
 
