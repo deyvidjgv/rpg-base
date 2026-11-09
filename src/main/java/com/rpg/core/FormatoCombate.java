@@ -25,8 +25,10 @@ public final class FormatoCombate {
     }
 
     public static String resumen(Personaje personaje) {
-        return String.format("%-12s %s %3d/%-3d %s", personaje.getNombre(),
-                barraVida(personaje.getVida(), personaje.getVidaMaxima()),
-                personaje.getVida(), personaje.getVidaMaxima(), personaje.getEstado());
+        synchronized (personaje) {
+            return String.format("%-12s %s %3d/%-3d %s", personaje.getNombre(),
+                    barraVida(personaje.getVida(), personaje.getVidaMaxima()),
+                    personaje.getVida(), personaje.getVidaMaxima(), personaje.getEstado());
+        }
     }
 }
