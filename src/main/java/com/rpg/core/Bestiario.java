@@ -3,6 +3,7 @@ package com.rpg.core;
 import com.rpg.entities.Enemigo;
 import com.rpg.entities.EstadoEfecto;
 import com.rpg.entities.enums.TipoEfecto;
+import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -10,7 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 /** Catalogo de monstruos (Map nombre -> plantilla) y contador de derrotas por monstruo. */
-public class Bestiario {
+public class Bestiario implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final Map<String, Enemigo> catalogo = new LinkedHashMap<>();
     private final Map<String, Integer> derrotados = new LinkedHashMap<>();
