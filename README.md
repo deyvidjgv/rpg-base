@@ -12,6 +12,26 @@ javac --release 21 -encoding UTF-8 -d out $fuentes
 java -cp out com.rpg.Main
 ```
 
+### Taller JDBC: Arena Segura
+
+El informe esta en [INFORME.md](INFORME.md). Para jugar con login, bestiario en la base y ranking:
+
+1. Crear la base (pide la clave de MySQL):
+   `& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p -e "source schema.sql"`
+2. Copiar `config.example.txt` como `config.txt` y poner la clave. `config.txt` no se sube al repositorio.
+3. Descargar el driver y ejecutar:
+
+```powershell
+mvn -q dependency:copy-dependencies -DoutputDirectory=target/lib
+$fuentes = Get-ChildItem src/main/java -Recurse -Filter *.java | ForEach-Object FullName
+javac --release 21 -encoding UTF-8 -d out $fuentes
+java -cp "out;target/lib/*" com.rpg.Main
+java -cp "out;target/lib/*" com.rpg.dao.demo.LoginInseguroDemo
+```
+
+Usuarios de prueba: `admin` / `admin123` (admin) y `heroe` / `heroe123` (jugador).
+Sin `config.txt` o sin MySQL el juego arranca igual, sin login, ranking ni registro de victorias.
+
 ---
 
 ## Enunciado original
